@@ -57,17 +57,50 @@ app.service("db", ["$http", function($http) {
 	};
 }]);
 
-app.controller("HomeCtrl", ["$scope", "db", function($scope, db) {
+app.controller("HomeCtrl", ["$scope", "$q", "db", function($scope, $q, db) {
 	$scope.transactions = [];
 	$scope.users = [];
 
+	var debt = function(debtor, creditor) {
+		var debt = $scope.transactions
+			.filter(function(t) {
+				return (t.payer_id === creditor.id && t.contributors.indexOf(debtor.id) !== -1);
+			})
+			.reduce(function(sum, t) {
+				return t.cost / t.contributors.length;
+			}, 0);
+
+		var credit = $scope.transactions
+			.filter(function(t) {
+				return (t.payer_id === debtor.id && t.contributors.indexOf(creditor.id) !== -1);
+			})
+			.reduce(function(sum, t) {
+				return t.cost / t.contributors.length;
+			}, 0);
+
+		return debt - credit;
+	};
+
 	// initialize
-	db.Transaction.query().then(function(transactions) {
+	var transactionPromise = db.Transaction.query().then(function(transactions) {
 		$scope.transactions = transactions;
 	});
 
-	db.User.query().then(function(users) {
+	var userPromise = db.User.query().then(function(users) {
 		$scope.users = users;
+	});
+
+	// compute debts
+	$q.all([transactionPromise, userPromise]).then(function() {
+		$scope.users.forEach(function(u1) {
+			u1.debts = $scope.users.map(function(u2) {
+				return {
+					id: u2.id,
+					name: u2.name,
+					debt: debt(u1, u2)
+				};
+			})
+		});
 	});
 }]);
 

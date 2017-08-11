@@ -1,19 +1,22 @@
 <div class="row">
-	<div class="col-sm-4">
-		<div class="panel panel-default">
+	<div class="col-sm-3">
+		<div class="panel panel-default" ng-repeat="u in users">
 			<div class="panel-heading">
-				<h3 class="panel-title">Users</h3>
+				<h3 class="panel-title">{{u.name}}</h3>
 			</div>
 
 			<table class="table">
-				<tr ng-repeat="u in users | orderBy:'name'">
-					<td>{{u.name}}</td>
+				<tr ng-repeat="d in u.debts | filter:{ name: '!' + u.name } | orderBy:'name'">
+					<td>{{d.name}}</td>
+					<td class="text-right text-{{d.debt > 0 ? 'danger' : 'success'}}">
+						<strong>{{d.debt | number:2}}</strong>
+					</td>
 				</tr>
 			</table>
 		</div>
 	</div>
 
-	<div class="col-sm-8">
+	<div class="col-sm-9">
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<h3 class="panel-title">Transactions</h3>
@@ -33,7 +36,7 @@
 				<tr ng-repeat="t in transactions | orderBy:'date'">
 					<td>{{t.date | date:'shortDate'}}</td>
 					<td>{{t.description}}</td>
-					<td>{{t.cost}}</td>
+					<td class="text-right">{{t.cost | number:2}}</td>
 					<td>{{users[t.payer_id].name}}</td>
 					<td>
 						<div ng-repeat="id in t.contributors">{{users[id].name}}</div>
