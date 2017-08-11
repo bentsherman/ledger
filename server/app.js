@@ -1,3 +1,4 @@
+const bodyParser = require("body-parser");
 const express = require("express");
 const fs = require("fs");
 const logger = require("morgan");
@@ -7,6 +8,7 @@ const DOC_ROOT = "dist";
 
 // initialize data
 const db = {
+	transactions: JSON.parse(fs.readFileSync("data/transactions.json", "utf-8")),
 	users: JSON.parse(fs.readFileSync("data/users.json", "utf-8"))
 };
 
@@ -14,12 +16,27 @@ const db = {
 const app = express();
 
 // initialize middleware
+app.use(bodyParser.json());
 app.use(logger("dev"));
 
 // define routes
 app.use("/", express.static(DOC_ROOT));
 
-app.use("/api/users", function(req, res) {
+app.get("/api/transactions", function(req, res) {
+	return res.status(200).send(db.transactions);
+});
+
+app.post("/api/transactions/0", function(req, res) {
+	const transaction = req.body;
+
+	transaction.id = "" + db.transactions.length;
+
+	db.transactions.push(transaction);
+
+	res.status(200).end();
+});
+
+app.get("/api/users", function(req, res) {
 	return res.status(200).send(db.users);
 });
 

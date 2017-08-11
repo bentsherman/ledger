@@ -6,6 +6,7 @@
   "dependencies": {
     "angular": "^1.6.5",
     "angular-route": "^1.6.5",
+    "body-parser": "^1.17.2",
     "bootstrap": "^3.3.7",
     "clean-webpack-plugin": "^0.1.16",
     "css-loader": "^0.28.4",

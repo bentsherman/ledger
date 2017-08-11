@@ -1,5 +1,5 @@
 <div class="row">
-	<div class="col-sm-8 col-sm-offset-2">
+	<div class="col-sm-4">
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<h3 class="panel-title">Users</h3>
@@ -11,5 +11,27 @@
 				</tr>
 			</table>
 		</div>
+	</div>
+
+	<div class="col-sm-8">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Transactions</h3>
+			</div>
+
+			<table class="table">
+				<th>Date</th>
+				<th>Description</th>
+				<th>Cost ($)</th>
+
+				<tr ng-repeat="t in transactions | orderBy:'date'">
+					<td>{{t.date | date:'shortDate'}}</td>
+					<td>{{t.description}}</td>
+					<td>{{t.cost}}</td>
+				</tr>
+			</table>
+		</div>
+
+		<a href="#!/create-transaction">Create transaction</a>
 	</div>
 </div>

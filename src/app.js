@@ -8,6 +8,7 @@ require("./css/style.css");
 
 // HTML templates
 require("./views/home.html");
+require("./views/transaction.html");
 
 var app = angular.module("app", [
 	"ngRoute"
@@ -23,11 +24,32 @@ app.config(["$routeProvider", function($routeProvider) {
 			templateUrl: "views/home.html",
 			controller: "HomeCtrl"
 		})
+		.when("/create-transaction", {
+			templateUrl: "views/transaction.html",
+			controller: "TransactionCtrl"
+		})
 		.otherwise("/");
 }]);
 
 app.service("db", ["$http", function($http) {
-	this.getUsers = function() {
+	this.Transaction = {};
+
+	this.Transaction.query = function() {
+		return $http.get("/api/transactions")
+			.then(function(res) {
+				return res.data;
+			});
+	};
+
+	this.Transaction.save = function(transaction) {
+		const id = transaction.id || "0";
+
+		return $http.post("/api/transactions/" + id, transaction);
+	};
+
+	this.User = {};
+
+	this.User.query = function() {
 		return $http.get("/api/users")
 			.then(function(res) {
 				return res.data;
@@ -36,10 +58,31 @@ app.service("db", ["$http", function($http) {
 }]);
 
 app.controller("HomeCtrl", ["$scope", "db", function($scope, db) {
+	$scope.transactions = [];
 	$scope.users = [];
 
 	// initialize
-	db.getUsers().then(function(users) {
+	db.Transaction.query().then(function(transactions) {
+		$scope.transactions = transactions;
+	});
+
+	db.User.query().then(function(users) {
+		$scope.users = users;
+	});
+}]);
+
+app.controller("TransactionCtrl", ["$scope", "$location", "db", function($scope, $location, db) {
+	$scope.users = [];
+	$scope.transaction = {};
+
+	$scope.save = function(transaction) {
+		db.Transaction.save(transaction).then(function() {
+			$location.url("/");
+		});
+	};
+
+	// initialize
+	db.User.query().then(function(users) {
 		$scope.users = users;
 	});
 }]);
