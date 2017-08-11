@@ -26,5 +26,20 @@ app.config(["$routeProvider", function($routeProvider) {
 		.otherwise("/");
 }]);
 
-app.controller("HomeCtrl", ["$scope", function($scope) {
+app.service("db", ["$http", function($http) {
+	this.getUsers = function() {
+		return $http.get("/api/users")
+			.then(function(res) {
+				return res.data;
+			});
+	};
+}]);
+
+app.controller("HomeCtrl", ["$scope", "db", function($scope, db) {
+	$scope.users = [];
+
+	// initialize
+	db.getUsers().then(function(users) {
+		$scope.users = users;
+	});
 }]);
