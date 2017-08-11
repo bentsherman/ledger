@@ -30,6 +30,20 @@
 					</div>
 				</div>
 
+				<div class="form-group" ng-class="{'has-error': form.payer_id.$touched && form.payer_id.$invalid}">
+					<label class="col-sm-3 control-label">Paid By</label>
+					<div class="col-sm-6">
+						<select class="form-control" name="payer_id" ng-model="transaction.payer_id" ng-options="u.id as u.name for u in users" required></select>
+					</div>
+				</div>
+
+				<div class="form-group" ng-class="{'has-error': form.contributors.$touched && form.contributors.$invalid}">
+					<label class="col-sm-3 control-label">Contributors</label>
+					<div class="col-sm-6">
+						<select class="form-control" size="5" multiple name="contributors" ng-model="transaction.contributors" ng-options="u.id as u.name for u in users" required></select>
+					</div>
+				</div>
+
 				<div class="text-center">
 					<button type="button" class="btn btn-default" ng-disabled="form.$invalid" ng-click="save(transaction)">Save</button>
 					<a href="/">Cancel</a>

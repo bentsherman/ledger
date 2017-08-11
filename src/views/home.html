@@ -19,19 +19,27 @@
 				<h3 class="panel-title">Transactions</h3>
 			</div>
 
+			<div class="panel-body">
+				<a href="#!/create-transaction">Create transaction</a>
+			</div>
+
 			<table class="table">
 				<th>Date</th>
 				<th>Description</th>
 				<th>Cost ($)</th>
+				<th>Paid By</th>
+				<th>Contributors</th>
 
 				<tr ng-repeat="t in transactions | orderBy:'date'">
 					<td>{{t.date | date:'shortDate'}}</td>
 					<td>{{t.description}}</td>
 					<td>{{t.cost}}</td>
+					<td>{{users[t.payer_id].name}}</td>
+					<td>
+						<div ng-repeat="id in t.contributors">{{users[id].name}}</div>
+					</td>
 				</tr>
 			</table>
 		</div>
-
-		<a href="#!/create-transaction">Create transaction</a>
 	</div>
 </div>
