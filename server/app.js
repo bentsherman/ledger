@@ -28,10 +28,10 @@ app.get("/api/transactions", function(req, res) {
 
 app.post("/api/transactions/0", function(req, res) {
 	const transaction = req.body;
-
 	transaction.id = "" + db.transactions.length;
 
 	db.transactions.push(transaction);
+	fs.writeFileSync("data/transactions.json", JSON.stringify(db.transactions), "utf-8");
 
 	res.status(200).end();
 });
