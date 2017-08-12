@@ -64,18 +64,18 @@ app.controller("HomeCtrl", ["$scope", "$q", "db", function($scope, $q, db) {
 	var debt = function(debtor, creditor) {
 		var debt = $scope.transactions
 			.filter(function(t) {
-				return (t.payer_id === creditor.id && t.contributors.indexOf(debtor.id) !== -1);
+				return (t.creditor_id === creditor.id && t.debtors.indexOf(debtor.id) !== -1);
 			})
 			.reduce(function(sum, t) {
-				return t.cost / t.contributors.length;
+				return t.cost / t.debtors.length;
 			}, 0);
 
 		var credit = $scope.transactions
 			.filter(function(t) {
-				return (t.payer_id === debtor.id && t.contributors.indexOf(creditor.id) !== -1);
+				return (t.creditor_id === debtor.id && t.debtors.indexOf(creditor.id) !== -1);
 			})
 			.reduce(function(sum, t) {
-				return t.cost / t.contributors.length;
+				return t.cost / t.debtors.length;
 			}, 0);
 
 		return debt - credit;
@@ -97,7 +97,7 @@ app.controller("HomeCtrl", ["$scope", "$q", "db", function($scope, $q, db) {
 				return {
 					id: u2.id,
 					name: u2.name,
-					debt: debt(u1, u2)
+					amount: debt(u1, u2)
 				};
 			})
 		});
