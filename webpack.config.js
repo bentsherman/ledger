@@ -46,7 +46,7 @@ module.exports = function(env) {
 			new UglifyJSPlugin({
 				sourceMap: true
 			}),
-			new ExtractTextPlugin("styles.css"),
+			new ExtractTextPlugin("styles.[contenthash].css"),
 			new HtmlWebpackPlugin({
 				template: "public/index.html",
 				favicon: "public/favicon.ico"
