@@ -122,14 +122,38 @@ app.controller("HomeCtrl", ["$scope", "$q", "$route", "db", function($scope, $q,
 		});
 }]);
 
-app.controller("TransactionCtrl", ["$scope", "$location", "db", function($scope, $location, db) {
+app.controller("TransactionCtrl", ["$scope", "$location", "$q", "db", function($scope, $location, $q, db) {
 	$scope.users = [];
 	$scope.transaction = {};
+	$scope.subTransactions = [];
 
-	$scope.save = function(transaction) {
-		db.Transaction.save(transaction).then(function() {
-			$location.url("/");
-		});
+	$scope.addSubTransaction = function() {
+		$scope.subTransactions.push({});
+	};
+
+	$scope.save = function(transaction, subTransactions) {
+		// subtract cost of sub-transactions from main transaction
+		var sum = subTransactions.reduce(function(sum, t) {
+			return sum + t.cost;
+		}, 0);
+
+		transaction.cost -= sum;
+
+		// save transaction and sub-transactions
+		db.Transaction.save(transaction)
+			.then(function() {
+				return subTransactions.reduce(function(prev, t) {
+					return prev.then(function() {
+						t.date = transaction.date;
+						t.creditor_id = transaction.creditor_id;
+
+						return db.Transaction.save(t);
+					});
+				}, $q.resolve());
+			})
+			.then(function() {
+				$location.url("/");
+			});
 	};
 
 	// initialize
