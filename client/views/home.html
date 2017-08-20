@@ -32,6 +32,7 @@
 				<th>Cost ($)</th>
 				<th>Paid By</th>
 				<th>Paid For</th>
+				<th></th>
 
 				<tr ng-repeat="t in transactions | orderBy:'date'">
 					<td>{{t.date | date:'shortDate'}}</td>
@@ -40,6 +41,9 @@
 					<td>{{users[t.creditor_id].name}}</td>
 					<td>
 						<div ng-repeat="id in t.debtors">{{users[id].name}}</div>
+					</td>
+					<td class="text-center">
+						<span class="button-icon" ng-click="deleteTransaction(t)">&times;</span>
 					</td>
 				</tr>
 			</table>

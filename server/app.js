@@ -36,6 +36,17 @@ app.post("/api/transactions/0", function(req, res) {
 	res.status(200).end();
 });
 
+app.delete("/api/transactions/:id", function(req, res) {
+	let index = db.transactions.findIndex(function(t) {
+		return (t.id === req.params.id);
+	});
+
+	db.transactions.splice(index, 1);
+	fs.writeFileSync("data/transactions.json", JSON.stringify(db.transactions), "utf-8");
+
+	res.status(200).end();
+});
+
 app.get("/api/users", function(req, res) {
 	return res.status(200).send(db.users);
 });

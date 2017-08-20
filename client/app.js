@@ -47,6 +47,10 @@ app.service("db", ["$http", function($http) {
 		return $http.post("/api/transactions/" + id, transaction);
 	};
 
+	this.Transaction.remove = function(id) {
+		return $http.delete("/api/transactions/" + id);
+	};
+
 	this.User = {};
 
 	this.User.query = function() {
@@ -57,7 +61,7 @@ app.service("db", ["$http", function($http) {
 	};
 }]);
 
-app.controller("HomeCtrl", ["$scope", "$q", "db", function($scope, $q, db) {
+app.controller("HomeCtrl", ["$scope", "$q", "$route", "db", function($scope, $q, $route, db) {
 	$scope.transactions = [];
 	$scope.users = [];
 
@@ -81,27 +85,41 @@ app.controller("HomeCtrl", ["$scope", "$q", "db", function($scope, $q, db) {
 		return debt - credit;
 	};
 
-	// initialize
-	var transactionPromise = db.Transaction.query().then(function(transactions) {
-		$scope.transactions = transactions;
-	});
+	$scope.deleteTransaction = function(t) {
+		if ( !confirm("Are you sure you want to delete \"" + t.description + "\"?") ) {
+			return;
+		}
 
-	var userPromise = db.User.query().then(function(users) {
-		$scope.users = users;
-	});
+		db.Transaction.remove(t)
+			.then(function() {
+				$route.reload();
+			})
+	};
+
+	// initialize
+	var transactionPromise = db.Transaction.query()
+		.then(function(transactions) {
+			$scope.transactions = transactions;
+		});
+
+	var userPromise = db.User.query()
+		.then(function(users) {
+			$scope.users = users;
+		});
 
 	// compute debts
-	$q.all([transactionPromise, userPromise]).then(function() {
-		$scope.users.forEach(function(u1) {
-			u1.debts = $scope.users.map(function(u2) {
-				return {
-					id: u2.id,
-					name: u2.name,
-					amount: debt(u1, u2)
-				};
-			})
+	$q.all([transactionPromise, userPromise])
+		.then(function() {
+			$scope.users.forEach(function(u1) {
+				u1.debts = $scope.users.map(function(u2) {
+					return {
+						id: u2.id,
+						name: u2.name,
+						amount: debt(u1, u2)
+					};
+				})
+			});
 		});
-	});
 }]);
 
 app.controller("TransactionCtrl", ["$scope", "$location", "db", function($scope, $location, db) {
