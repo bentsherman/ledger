@@ -7,16 +7,20 @@ const CleanWebpackPlugin = require("clean-webpack-plugin");
 
 module.exports = function(env) {
 	return {
-		devtool: (env === "production") ? "source-map" : "cheap-eval-source-map",
+		devtool: (env === "production")
+			? "source-map"
+			: "cheap-eval-source-map",
 		entry: {
-			app: "./src/app.js",
+			app: "./client/app.js",
 			vendors: [
 				"angular",
 				"angular-route"
 			]
 		},
 		output: {
-			filename: (env === "production") ? "[name].[chunkhash].js" : "[name].js",
+			filename: (env === "production")
+				? "js/[name].[chunkhash].js"
+				: "js/[name].js",
 			path: path.resolve(__dirname, "dist")
 		},
 		module: {
@@ -46,10 +50,10 @@ module.exports = function(env) {
 			new UglifyJSPlugin({
 				sourceMap: true
 			}),
-			new ExtractTextPlugin("styles.[contenthash].css"),
+			new ExtractTextPlugin("css/styles.[contenthash].css"),
 			new HtmlWebpackPlugin({
-				template: "public/index.html",
-				favicon: "public/favicon.ico"
+				template: "client/index.html",
+				favicon: "client/favicon.ico"
 			}),
 			new CleanWebpackPlugin(["dist"]),
 			new webpack.optimize.CommonsChunkPlugin({
