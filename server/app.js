@@ -1,16 +1,18 @@
 const bodyParser = require("body-parser");
+const Database = require("./database");
 const express = require("express");
-const fs = require("fs");
 const logger = require("morgan");
 
 // initialize constants
 const DOC_ROOT = "dist";
+const DB_FILENAME = "data/db.json";
+const DB_FILENAME_BACKUP = "data/db.backup.json";
 
-// initialize data
-const db = {
-	transactions: JSON.parse(fs.readFileSync("data/transactions.json", "utf-8")),
-	users: JSON.parse(fs.readFileSync("data/users.json", "utf-8"))
-};
+// initialize database
+const db = new Database();
+
+db.load(DB_FILENAME);
+db.save(DB_FILENAME_BACKUP);
 
 // initialize app
 const app = express();
@@ -23,32 +25,31 @@ app.use(logger("dev"));
 app.use("/", express.static(DOC_ROOT));
 
 app.get("/api/transactions", function(req, res) {
-	return res.status(200).send(db.transactions);
+	let docs = db.query("transactions");
+
+	return res.status(200).send(docs);
 });
 
 app.post("/api/transactions/0", function(req, res) {
-	const transaction = req.body;
-	transaction.id = "" + db.transactions.length;
+	let doc = req.body;
 
-	db.transactions.push(transaction);
-	fs.writeFileSync("data/transactions.json", JSON.stringify(db.transactions), "utf-8");
+	db.push("transactions", doc);
+	db.save(DB_FILENAME);
 
 	res.status(200).end();
 });
 
 app.delete("/api/transactions/:id", function(req, res) {
-	let index = db.transactions.findIndex(function(t) {
-		return (t.id === req.params.id);
-	});
-
-	db.transactions.splice(index, 1);
-	fs.writeFileSync("data/transactions.json", JSON.stringify(db.transactions), "utf-8");
+	db.remove("transactions", req.params.id);
+	db.save(DB_FILENAME);
 
 	res.status(200).end();
 });
 
 app.get("/api/users", function(req, res) {
-	return res.status(200).send(db.users);
+	let docs = db.query("users");
+
+	return res.status(200).send(docs);
 });
 
 // define 404 handler
@@ -62,7 +63,7 @@ app.use(function(err, req, res, next) {
 		return next(err);
 	}
 
-	res.status(500).send({ message: err.message });
+	res.status(500).send(err.message);
 });
 
 // start HTTP web server
