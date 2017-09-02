@@ -90,7 +90,7 @@ app.controller("HomeCtrl", ["$scope", "$q", "$route", "db", function($scope, $q,
 			return;
 		}
 
-		db.Transaction.remove(t)
+		db.Transaction.remove(t.id)
 			.then(function() {
 				$route.reload();
 			})
