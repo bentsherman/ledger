@@ -71,7 +71,7 @@ app.controller("HomeCtrl", ["$scope", "$q", "$route", "db", function($scope, $q,
 				return (t.creditor_id === creditor.id && t.debtors.indexOf(debtor.id) !== -1);
 			})
 			.reduce(function(sum, t) {
-				return t.cost / t.debtors.length;
+				return sum + t.cost / t.debtors.length;
 			}, 0);
 
 		var credit = $scope.transactions
@@ -79,7 +79,7 @@ app.controller("HomeCtrl", ["$scope", "$q", "$route", "db", function($scope, $q,
 				return (t.creditor_id === debtor.id && t.debtors.indexOf(creditor.id) !== -1);
 			})
 			.reduce(function(sum, t) {
-				return t.cost / t.debtors.length;
+				return sum + t.cost / t.debtors.length;
 			}, 0);
 
 		return debt - credit;
