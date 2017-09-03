@@ -50,7 +50,7 @@ function Database()
 			return (d.id === id);
 		});
 
-		tables[tableName].splice(index, 1);
+		return tables[tableName].splice(index, 1);
 	};
 }
 

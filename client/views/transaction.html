@@ -28,7 +28,7 @@
 							<input class="form-control" type="number" name="cost" ng-model="transaction.cost" required/>
 						</div>
 
-						<p class="help-block text-right">(with sub-items removed: ${{getSubTotal(transaction, subTransactions) | number:2}})</p>
+						<p class="help-block text-right">(with sub-items removed: ${{getSubTotal(transaction) | number:2}})</p>
 					</div>
 				</div>
 
@@ -46,10 +46,10 @@
 					</div>
 				</div>
 
-				<div ng-repeat="t in subTransactions">
+				<div ng-repeat="t in transaction.sub_items">
 					<hr>
 
-					<span class="close" ng-click="subTransactions.splice($index, 1)">&times;</span>
+					<span class="close" ng-click="transaction.sub_items.splice($index, 1)">&times;</span>
 
 					<div class="form-group">
 						<label class="col-sm-3 control-label">Description</label>
@@ -79,13 +79,13 @@
 				<hr>
 
 				<div class="form-group text-center">
-					<a href="" ng-click="subTransactions.push({})">Add separate sub-item...</a>
+					<a href="" ng-click="transaction.sub_items.push({})">Add separate sub-item...</a>
 				</div>
 
 				<hr>
 
 				<div class="text-center">
-					<button type="button" class="btn btn-default" ng-disabled="form.$invalid" ng-click="save(transaction, subTransactions)">Save</button>
+					<button type="button" class="btn btn-default" ng-disabled="form.$invalid" ng-click="save(transaction)">Save</button>
 					<a href="/">Cancel</a>
 				</div>
 			</form>

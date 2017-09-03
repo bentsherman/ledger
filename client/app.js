@@ -71,7 +71,18 @@ app.controller("HomeCtrl", ["$scope", "$route", "db", function($scope, $route, d
 	$scope.users = [];
 
 	var debt = function(debtor, creditor) {
-		var debt = $scope.transactions
+		// flatten transactions and sub-items into array
+		var transactions = $scope.transactions
+			.reduce(function(prev, t) {
+				t.sub_items.forEach(function(sub) {
+					sub.creditor_id = t.creditor_id;
+				});
+
+				return prev.concat([t], t.sub_items);
+			}, []);
+
+		// compute debts
+		var debt = transactions
 			.filter(function(t) {
 				return (t.creditor_id === creditor.id && t.debtors.indexOf(debtor.id) !== -1);
 			})
@@ -79,7 +90,8 @@ app.controller("HomeCtrl", ["$scope", "$route", "db", function($scope, $route, d
 				return sum + t.cost / t.debtors.length;
 			}, 0);
 
-		var credit = $scope.transactions
+		// compute credits
+		var credit = transactions
 			.filter(function(t) {
 				return (t.creditor_id === debtor.id && t.debtors.indexOf(creditor.id) !== -1);
 			})
@@ -125,33 +137,21 @@ app.controller("HomeCtrl", ["$scope", "$route", "db", function($scope, $route, d
 
 app.controller("TransactionCtrl", ["$scope", "$location", "$q", "$routeParams", "db", function($scope, $location, $q, $routeParams, db) {
 	$scope.users = [];
-	$scope.transaction = {};
-	$scope.subTransactions = [];
+	$scope.transaction = { sub_items: [] };
 
-	$scope.getSubTotal = function(transaction, subTransactions) {
-		var sum = subTransactions.reduce(function(sum, t) {
+	$scope.getSubTotal = function(transaction) {
+		var sum = transaction.sub_items.reduce(function(sum, t) {
 			return sum + t.cost;
 		}, 0);
 
 		return transaction.cost - sum;
 	};
 
-	$scope.save = function(transaction, subTransactions) {
+	$scope.save = function(transaction) {
 		// subtract cost of sub-transactions from main transaction
-		transaction.cost = $scope.getSubTotal(transaction, subTransactions);
+		transaction.cost = $scope.getSubTotal(transaction);
 
-		// save transaction and sub-transactions
 		db.Transaction.save(transaction)
-			.then(function() {
-				return subTransactions.reduce(function(prev, t) {
-					return prev.then(function() {
-						t.date = transaction.date;
-						t.creditor_id = transaction.creditor_id;
-
-						return db.Transaction.save(t);
-					});
-				}, $q.resolve());
-			})
 			.then(function() {
 				$location.url("/");
 			});
@@ -164,11 +164,16 @@ app.controller("TransactionCtrl", ["$scope", "$location", "$q", "$routeParams", 
 
 			return ($routeParams.id !== "0")
 				? db.Transaction.get($routeParams.id)
-				: { id: "0" };
+				: { id: "0", sub_items: [] };
 		})
 		.then(function(transaction) {
-			// temporary hack to fix date
+			// convert date to proper type
 			transaction.date = new Date(transaction.date);
+
+			// add cost of sub-items to total
+			transaction.sub_items.forEach(function(t) {
+				transaction.cost += t.cost;
+			});
 
 			$scope.transaction = transaction;
 		});

@@ -35,23 +35,37 @@
 				<th></th>
 				<th></th>
 
-				<tr ng-repeat="t in transactions | orderBy:'date'">
-					<td>{{t.date | date:'shortDate'}}</td>
-					<td>{{t.description}}</td>
-					<td class="text-right">{{t.cost | number:2}}</td>
-					<td>{{users[t.creditor_id].short_name}}</td>
-					<td>
-						<div ng-repeat="id in t.debtors">{{users[id].short_name}}</div>
-					</td>
-					<td class="text-center">
-						<a class="button-icon" ng-href="#!/transaction/{{t.id}}">
-							<span class="glyphicon glyphicon-pencil"></span>
-						</a>
-					</td>
-					<td class="text-center">
-						<span class="button-icon" ng-click="deleteTransaction(t)">&times;</span>
-					</td>
-				</tr>
+				<tbody ng-repeat="t in transactions | orderBy:'date'">
+					<tr>
+						<td>{{t.date | date:'shortDate'}}</td>
+						<td>{{t.description}}</td>
+						<td class="text-right">{{t.cost | number:2}}</td>
+						<td>{{users[t.creditor_id].short_name}}</td>
+						<td>
+							<div ng-repeat="id in t.debtors">{{users[id].short_name}}</div>
+						</td>
+						<td class="text-center">
+							<a class="button-icon" ng-href="#!/transaction/{{t.id}}">
+								<span class="glyphicon glyphicon-pencil"></span>
+							</a>
+						</td>
+						<td class="text-center">
+							<span class="button-icon" ng-click="deleteTransaction(t)">&times;</span>
+						</td>
+					</tr>
+
+					<tr ng-repeat="sub in t.sub_items">
+						<td></td>
+						<td>{{sub.description}}</td>
+						<td class="text-right">{{sub.cost | number:2}}</td>
+						<td></td>
+						<td>
+							<div ng-repeat="id in sub.debtors">{{users[id].short_name}}</div>
+						</td>
+						<td></td>
+						<td></td>
+					</tr>
+				</tbody>
 			</table>
 		</div>
 	</div>
