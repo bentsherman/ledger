@@ -27,13 +27,33 @@ app.use("/", express.static(DOC_ROOT));
 app.get("/api/transactions", function(req, res) {
 	let docs = db.query("transactions");
 
-	return res.status(200).send(docs);
+	res.status(200).send(docs);
+});
+
+app.get("/api/transactions/:id", function(req, res) {
+	let doc = db.find("transactions", req.params.id);
+
+	if ( doc ) {
+		res.status(200).send(doc);
+	}
+	else {
+		res.status(404).end();
+	}
 });
 
 app.post("/api/transactions/0", function(req, res) {
 	let doc = req.body;
 
 	db.push("transactions", doc);
+	db.save(DB_FILENAME);
+
+	res.status(200).end();
+});
+
+app.post("/api/transactions/:id", function(req, res) {
+	let doc = req.body;
+
+	db.update("transactions", req.params.id, doc);
 	db.save(DB_FILENAME);
 
 	res.status(200).end();
@@ -49,7 +69,7 @@ app.delete("/api/transactions/:id", function(req, res) {
 app.get("/api/users", function(req, res) {
 	let docs = db.query("users");
 
-	return res.status(200).send(docs);
+	res.status(200).send(docs);
 });
 
 // define 404 handler

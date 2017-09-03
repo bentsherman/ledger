@@ -50,7 +50,7 @@ module.exports = function(env) {
 			new UglifyJSPlugin({
 				sourceMap: true
 			}),
-			new ExtractTextPlugin("css/styles.[contenthash].css"),
+			new ExtractTextPlugin("styles.[contenthash].css"),
 			new HtmlWebpackPlugin({
 				template: "client/index.html",
 				favicon: "client/favicon.ico"

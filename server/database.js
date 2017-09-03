@@ -28,9 +28,21 @@ function Database()
 	};
 
 	this.push = function(tableName, doc) {
-		doc.id = "" + tables[tableName].length;
+		let max_id = tables[tableName].reduce(function(prev, d) {
+			return Math.max(prev, d.id);
+		}, 0);
+
+		doc.id = "" + (max_id + 1);
 
 		tables[tableName].push(doc);
+	};
+
+	this.update = function(tableName, id, update) {
+		let doc = tables[tableName].find(function(d) {
+			return (d.id === id);
+		});
+
+		return Object.assign(doc, update);
 	};
 
 	this.remove = function(tableName, id) {

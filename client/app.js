@@ -24,7 +24,7 @@ app.config(["$routeProvider", function($routeProvider) {
 			templateUrl: "views/home.html",
 			controller: "HomeCtrl"
 		})
-		.when("/create-transaction", {
+		.when("/transaction/:id", {
 			templateUrl: "views/transaction.html",
 			controller: "TransactionCtrl"
 		})
@@ -41,10 +41,15 @@ app.service("db", ["$http", function($http) {
 			});
 	};
 
-	this.Transaction.save = function(transaction) {
-		const id = transaction.id || "0";
+	this.Transaction.get = function(id) {
+		return $http.get("/api/transactions/" + id)
+			.then(function(res) {
+				return res.data;
+			});
+	};
 
-		return $http.post("/api/transactions/" + id, transaction);
+	this.Transaction.save = function(transaction) {
+		return $http.post("/api/transactions/" + transaction.id, transaction);
 	};
 
 	this.Transaction.remove = function(id) {
@@ -61,7 +66,7 @@ app.service("db", ["$http", function($http) {
 	};
 }]);
 
-app.controller("HomeCtrl", ["$scope", "$q", "$route", "db", function($scope, $q, $route, db) {
+app.controller("HomeCtrl", ["$scope", "$route", "db", function($scope, $route, db) {
 	$scope.transactions = [];
 	$scope.users = [];
 
@@ -97,19 +102,15 @@ app.controller("HomeCtrl", ["$scope", "$q", "$route", "db", function($scope, $q,
 	};
 
 	// initialize
-	var transactionPromise = db.Transaction.query()
-		.then(function(transactions) {
-			$scope.transactions = transactions;
-		});
-
-	var userPromise = db.User.query()
+	db.User.query()
 		.then(function(users) {
 			$scope.users = users;
-		});
 
-	// compute debts
-	$q.all([transactionPromise, userPromise])
-		.then(function() {
+			return db.Transaction.query();
+		})
+		.then(function(transactions) {
+			$scope.transactions = transactions;
+
 			$scope.users.forEach(function(u1) {
 				u1.debts = $scope.users.map(function(u2) {
 					return {
@@ -122,7 +123,7 @@ app.controller("HomeCtrl", ["$scope", "$q", "$route", "db", function($scope, $q,
 		});
 }]);
 
-app.controller("TransactionCtrl", ["$scope", "$location", "$q", "db", function($scope, $location, $q, db) {
+app.controller("TransactionCtrl", ["$scope", "$location", "$q", "$routeParams", "db", function($scope, $location, $q, $routeParams, db) {
 	$scope.users = [];
 	$scope.transaction = {};
 	$scope.subTransactions = [];
@@ -157,7 +158,18 @@ app.controller("TransactionCtrl", ["$scope", "$location", "$q", "db", function($
 	};
 
 	// initialize
-	db.User.query().then(function(users) {
-		$scope.users = users;
-	});
+	db.User.query()
+		.then(function(users) {
+			$scope.users = users;
+
+			return ($routeParams.id !== "0")
+				? db.Transaction.get($routeParams.id)
+				: { id: "0" };
+		})
+		.then(function(transaction) {
+			// temporary hack to fix date
+			transaction.date = new Date(transaction.date);
+
+			$scope.transaction = transaction;
+		});
 }]);
