@@ -39,9 +39,9 @@
 					<td>{{t.date | date:'shortDate'}}</td>
 					<td>{{t.description}}</td>
 					<td class="text-right">{{t.cost | number:2}}</td>
-					<td>{{users[t.creditor_id].name}}</td>
+					<td>{{users[t.creditor_id].short_name}}</td>
 					<td>
-						<div ng-repeat="id in t.debtors">{{users[id].name}}</div>
+						<div ng-repeat="id in t.debtors">{{users[id].short_name}}</div>
 					</td>
 					<td class="text-center">
 						<a class="button-icon" ng-href="#!/transaction/{{t.id}}">
