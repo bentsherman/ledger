@@ -27,6 +27,8 @@
 							<div class="input-group-addon">$</div>
 							<input class="form-control" type="number" name="cost" ng-model="transaction.cost" required/>
 						</div>
+
+						<p class="help-block text-right">(with sub-items removed: ${{getSubTotal(transaction, subTransactions) | number:2}})</p>
 					</div>
 				</div>
 
@@ -46,6 +48,8 @@
 
 				<div ng-repeat="t in subTransactions">
 					<hr>
+
+					<span class="close" ng-click="subTransactions.splice($index, 1)">&times;</span>
 
 					<div class="form-group">
 						<label class="col-sm-3 control-label">Description</label>
@@ -75,7 +79,7 @@
 				<hr>
 
 				<div class="form-group text-center">
-					<a href="" ng-click="addSubTransaction()">Add separate sub-item...</a>
+					<a href="" ng-click="subTransactions.push({})">Add separate sub-item...</a>
 				</div>
 
 				<hr>

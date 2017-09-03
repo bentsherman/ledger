@@ -128,17 +128,17 @@ app.controller("TransactionCtrl", ["$scope", "$location", "$q", "$routeParams", 
 	$scope.transaction = {};
 	$scope.subTransactions = [];
 
-	$scope.addSubTransaction = function() {
-		$scope.subTransactions.push({});
-	};
-
-	$scope.save = function(transaction, subTransactions) {
-		// subtract cost of sub-transactions from main transaction
+	$scope.getSubTotal = function(transaction, subTransactions) {
 		var sum = subTransactions.reduce(function(sum, t) {
 			return sum + t.cost;
 		}, 0);
 
-		transaction.cost -= sum;
+		return transaction.cost - sum;
+	};
+
+	$scope.save = function(transaction, subTransactions) {
+		// subtract cost of sub-transactions from main transaction
+		transaction.cost = $scope.getSubTotal(transaction, subTransactions);
 
 		// save transaction and sub-transactions
 		db.Transaction.save(transaction)
