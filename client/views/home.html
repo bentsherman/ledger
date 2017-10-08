@@ -5,6 +5,10 @@
 				<h3 class="panel-title">{{u.name}}</h3>
 			</div>
 
+			<div class="panel-body">
+				<a ng-href="{{u.url}}">{{u.url}}</a>
+			</div>
+
 			<table class="table">
 				<tr ng-repeat="d in u.debts | filter:{ name: '!' + u.name } | orderBy:'name'">
 					<td>{{d.name}}</td>
