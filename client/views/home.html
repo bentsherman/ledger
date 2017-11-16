@@ -1,5 +1,5 @@
 <div class="row">
-	<div class="col-sm-3">
+	<div class="col-sm-3 col-md-2">
 		<div class="panel panel-default" ng-repeat="u in users">
 			<div class="panel-heading">
 				<h3 class="panel-title">{{u.name}}</h3>
@@ -20,7 +20,7 @@
 		</div>
 	</div>
 
-	<div class="col-sm-9">
+	<div class="col-sm-9 col-md-10">
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<h3 class="panel-title">Transactions</h3>
@@ -39,7 +39,7 @@
 				<th></th>
 				<th></th>
 
-				<tbody ng-repeat="t in transactions | orderBy:'date'">
+				<tbody ng-repeat="t in transactions | orderBy:'-date'">
 					<tr>
 						<td>{{t.date | date:'shortDate'}}</td>
 						<td>{{t.description}}</td>
