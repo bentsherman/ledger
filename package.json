@@ -24,7 +24,7 @@
     "build": "webpack -p --env production",
     "build-dev": "webpack",
     "start": "pm2 startOrReload app.json",
-    "logs": "pm2 logs ledger",
-    "stop": "pm2 delete ledger"
+    "stop": "pm2 delete ledger",
+    "pm2": "pm2"
   }
 }
