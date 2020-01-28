@@ -54,7 +54,11 @@
 				<div v-for="(t, index) in transaction.sub_items" v-bind:key="t.id">
 					<hr>
 
-					<span class="close" v-on:click="transaction.sub_items.splice(index, 1)">&times;</span>
+					<div class="form-group row justify-content-end">
+						<div class="col">
+							<span class="close" v-on:click="transaction.sub_items.splice(index, 1)">&times;</span>
+						</div>
+					</div>
 
 					<div class="form-group row">
 						<label class="col-sm-3 col-form-label">Description</label>
