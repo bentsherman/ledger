@@ -1,16 +1,14 @@
 <template>
 <div class="row">
 	<div class="col-sm-3 col-md-2">
-		<div class="panel panel-default" v-for="u in users" v-bind:key="u.id">
-			<div class="panel-heading">
-				<h3 class="panel-title">{{u.name}}</h3>
-			</div>
+		<div class="card mb-4" v-for="u in users" v-bind:key="u.id">
+			<h6 class="card-header">{{u.name}}</h6>
 
-			<div class="panel-body">
+			<div class="card-body" v-if="u.url">
 				<a v-bind:href="u.url">{{u.url}}</a>
 			</div>
 
-			<table class="table">
+			<table class="table mb-0">
 				<tr v-for="d in u.debts" v-bind:key="d.name">
 					<td>{{d.name}}</td>
 					<td class="text-right" v-bind:class="{ 'text-danger': d.amount > 0, 'text-success': d.amount < 0 }">
@@ -22,23 +20,21 @@
 	</div>
 
 	<div class="col-sm-9 col-md-10">
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<h3 class="panel-title">Transactions</h3>
-			</div>
+		<div class="card">
+			<h6 class="card-header">Transactions</h6>
 
-			<div class="panel-body">
+			<div class="card-body">
 				<router-link to="/transaction/0">Create transaction</router-link>
 			</div>
 
-			<table class="table">
-				<th>Date</th>
-				<th>Description</th>
-				<th>Cost ($)</th>
-				<th>Paid By</th>
-				<th>Paid For</th>
-				<th></th>
-				<th></th>
+			<table class="table mb-0">
+				<th scope="col">Date</th>
+				<th scope="col">Description</th>
+				<th scope="col">Cost ($)</th>
+				<th scope="col">Paid By</th>
+				<th scope="col">Paid For</th>
+				<th scope="col"></th>
+				<th scope="col"></th>
 
 				<tbody v-for="t in transactionsView" v-bind:key="t.id">
 					<tr>
@@ -50,9 +46,7 @@
 							<div v-for="id in t.debtors">{{users[id].short_name}}</div>
 						</td>
 						<td class="text-center">
-							<router-link class="button-icon" :to="'/transaction/' + t.id">
-								<span class="glyphicon glyphicon-pencil"></span>
-							</router-link>
+							<router-link :to="'/transaction/' + t.id">Edit</router-link>
 						</td>
 						<td class="text-center">
 							<span class="button-icon" v-on:click="deleteTransaction(t)">&times;</span>

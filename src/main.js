@@ -8,7 +8,7 @@ Vue.config.productionTip = false
 
 Vue.filter('date', function(value) {
   let date = new Date(value)
-  return `${date.getMonth()}/${date.getDate()}/${date.getYear()}`
+  return `${date.getUTCMonth() + 1}/${date.getUTCDate()}/${date.getUTCFullYear()}`
 })
 
 Vue.filter('number', function(value, fractionSize) {

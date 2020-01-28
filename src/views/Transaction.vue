@@ -1,81 +1,83 @@
 <template>
-<div class="row">
-	<div class="col-sm-8 col-sm-offset-2">
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<h3 class="panel-title">Create Transaction</h3>
-			</div>
+<div class="row justify-content-center">
+	<div class="col-sm-6">
+		<div class="card">
+			<h6 class="card-header">Create Transaction</h6>
 
-			<form class="panel-body form-horizontal" name="form">
-				<div class="form-group">
-					<label class="col-sm-3 control-label">Date</label>
-					<div class="col-sm-6">
+			<form class="card-body" name="form">
+				<div class="form-group row">
+					<label class="col-sm-3 col-form-label">Date</label>
+					<div class="col-sm-9">
 						<input class="form-control" type="date" name="date" v-model="transaction.date" required placeholder="yyyy-mm-dd"/>
 					</div>
 				</div>
 
-				<div class="form-group">
-					<label class="col-sm-3 control-label">Description</label>
-					<div class="col-sm-6">
+				<div class="form-group row">
+					<label class="col-sm-3 col-form-label">Description</label>
+					<div class="col-sm-9">
 						<input class="form-control" name="description" v-model="transaction.description" required/>
 					</div>
 				</div>
 
-				<div class="form-group">
-					<label class="col-sm-3 control-label">Cost</label>
-					<div class="col-sm-6">
+				<div class="form-group row">
+					<label class="col-sm-3 col-form-label">Cost</label>
+					<div class="col-sm-9">
 						<div class="input-group">
-							<div class="input-group-addon">$</div>
+							<div class="input-group-prepend">
+								<span class="input-group-text">$</span>
+							</div>
 							<input class="form-control" type="number" name="cost" v-model="transaction.cost" required/>
 						</div>
 
-						<p class="help-block text-right">(with sub-items removed: ${{getSubTotal(transaction) | number(2)}})</p>
+						<p class="form-text text-right">(with sub-items removed: ${{getSubTotal(transaction) | number(2)}})</p>
 					</div>
 				</div>
 
-				<div class="form-group">
-					<label class="col-sm-3 control-label">Paid By</label>
-					<div class="col-sm-6">
+				<div class="form-group row">
+					<label class="col-sm-3 col-form-label">Paid By</label>
+					<div class="col-sm-9">
 						<select class="form-control" name="creditor_id" v-model="transaction.creditor_id" required>
 							<option v-for="u in users" v-bind:key="u.id" v-bind:value="u.id">{{u.name}}</option>
 						</select>
 					</div>
 				</div>
 
-				<div class="form-group">
-					<label class="col-sm-3 control-label">Paid For</label>
-					<div class="col-sm-6">
+				<div class="form-group row">
+					<label class="col-sm-3 col-form-label">Paid For</label>
+					<div class="col-sm-9">
 						<select class="form-control" size="5" multiple name="debtors" v-model="transaction.debtors" required>
 							<option v-for="u in users" v-bind:key="u.id" v-bind:value="u.id">{{u.name}}</option>
 						</select>
 					</div>
 				</div>
 
-				<div v-for="t in transaction.sub_items" v-bind:key="t.id">
+				<div v-for="(t, index) in transaction.sub_items" v-bind:key="t.id">
 					<hr>
 
-					<span class="close" v-on:click="transaction.sub_items.splice($index, 1)">&times;</span>
+					<span class="close" v-on:click="transaction.sub_items.splice(index, 1)">&times;</span>
 
-					<div class="form-group">
-						<label class="col-sm-3 control-label">Description</label>
-						<div class="col-sm-6">
+					<div class="form-group row">
+						<label class="col-sm-3 col-form-label">Description</label>
+						<div class="col-sm-9">
 							<input class="form-control" v-model="t.description" required/>
 						</div>
 					</div>
 
-					<div class="form-group">
-						<label class="col-sm-3 control-label">Cost</label>
-						<div class="col-sm-6">
+					<div class="form-group row">
+						<label class="col-sm-3 col-form-label">Cost</label>
+						<div class="col-sm-9">
 							<div class="input-group">
-								<div class="input-group-addon">$</div>
+								<div class="input-group-prepend">
+									<span class="input-group-text">$</span>
+								</div>
 								<input class="form-control" type="number" v-model="t.cost" required/>
 							</div>
 						</div>
 					</div>
 
-					<div class="form-group">
-						<label class="col-sm-3 control-label">Paid For</label>
-						<div class="col-sm-6">
+					<div class="form-group row">
+						<label class="col-sm-3 col-form-label">Paid For</label>
+						<div class="col-sm-9">
 							<select class="form-control" size="5" multiple v-model="t.debtors" required>
 								<option v-for="u in users" v-bind:key="u.id" v-bind:value="u.id">{{u.name}}</option>
 							</select>
@@ -85,15 +87,15 @@
 
 				<hr>
 
-				<div class="form-group text-center">
-					<a href="" v-on:click="transaction.sub_items.push({})">Add separate sub-item...</a>
+				<div class="form-group row text-center">
+					<button type="button" class="btn btn-link" v-on:click="transaction.sub_items.push({debtors: []})">Add separate sub-item...</button>
 				</div>
 
 				<hr>
 
 				<div class="text-center">
-					<button type="button" class="btn btn-default" v-on:click="save(transaction)">Save</button>
-					<a href="/">Cancel</a>
+					<button type="button" class="btn btn-outline-dark" v-on:click="save(transaction)">Save</button>
+					<router-link to="/" class="btn btn-link">Cancel</router-link>
 				</div>
 			</form>
 		</div>
