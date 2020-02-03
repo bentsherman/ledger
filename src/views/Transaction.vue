@@ -4,18 +4,26 @@
 		<div class="card">
 			<h6 class="card-header">Create Transaction</h6>
 
-			<form class="card-body" name="form">
+			<form class="card-body">
 				<div class="form-group row">
 					<label class="col-sm-3 col-form-label">Date</label>
 					<div class="col-sm-9">
-						<input class="form-control" type="date" name="date" v-model="transaction.date" required placeholder="yyyy-mm-dd"/>
+						<input
+							class="form-control"
+							:class="{ 'is-invalid': $v.transaction.date.$invalid }"
+							type="date"
+							v-model="$v.transaction.date.$model"
+							placeholder="yyyy-mm-dd"/>
 					</div>
 				</div>
 
 				<div class="form-group row">
 					<label class="col-sm-3 col-form-label">Description</label>
 					<div class="col-sm-9">
-						<input class="form-control" name="description" v-model="transaction.description" required/>
+						<input
+							class="form-control"
+							:class="{ 'is-invalid': $v.transaction.description.$invalid }"
+							v-model="$v.transaction.description.$model"/>
 					</div>
 				</div>
 
@@ -26,7 +34,11 @@
 							<div class="input-group-prepend">
 								<span class="input-group-text">$</span>
 							</div>
-							<input class="form-control" type="number" name="cost" v-model="transaction.cost" required/>
+							<input
+								class="form-control"
+								:class="{ 'is-invalid': $v.transaction.cost.$invalid }"
+								type="number"
+								v-model.number="$v.transaction.cost.$model"/>
 						</div>
 
 						<p class="form-text text-right">(with sub-items removed: ${{getSubTotal(transaction) | number(2)}})</p>
@@ -36,8 +48,11 @@
 				<div class="form-group row">
 					<label class="col-sm-3 col-form-label">Paid By</label>
 					<div class="col-sm-9">
-						<select class="form-control" name="creditor_id" v-model="transaction.creditor_id" required>
-							<option v-for="u in users" v-bind:key="u.id" v-bind:value="u.id">{{u.name}}</option>
+						<select
+							class="custom-select"
+							:class="{ 'is-invalid': $v.transaction.creditor_id.$invalid }"
+							v-model="$v.transaction.creditor_id.$model">
+							<option v-for="u in users" :key="u.id" :value="u.id">{{u.name}}</option>
 						</select>
 					</div>
 				</div>
@@ -45,25 +60,33 @@
 				<div class="form-group row">
 					<label class="col-sm-3 col-form-label">Paid For</label>
 					<div class="col-sm-9">
-						<select class="form-control" size="5" multiple name="debtors" v-model="transaction.debtors" required>
-							<option v-for="u in users" v-bind:key="u.id" v-bind:value="u.id">{{u.name}}</option>
+						<select
+							class="custom-select"
+							:class="{ 'is-invalid': $v.transaction.debtors.$invalid }"
+							size="5"
+							multiple
+							v-model="$v.transaction.debtors.$model">
+							<option v-for="u in users" :key="u.id" :value="u.id">{{u.name}}</option>
 						</select>
 					</div>
 				</div>
 
-				<div v-for="(t, index) in transaction.sub_items" v-bind:key="t.id">
+				<div v-for="(v, index) in $v.transaction.sub_items.$each.$iter">
 					<hr>
 
 					<div class="form-group row justify-content-end">
 						<div class="col">
-							<span class="close" v-on:click="transaction.sub_items.splice(index, 1)">&times;</span>
+							<span class="close button-icon" v-on:click="transaction.sub_items.splice(index, 1)">&times;</span>
 						</div>
 					</div>
 
 					<div class="form-group row">
 						<label class="col-sm-3 col-form-label">Description</label>
 						<div class="col-sm-9">
-							<input class="form-control" v-model="t.description" required/>
+							<input
+								class="form-control"
+								:class="{ 'is-invalid': v.description.$invalid }"
+								v-model="v.description.$model"/>
 						</div>
 					</div>
 
@@ -74,7 +97,11 @@
 								<div class="input-group-prepend">
 									<span class="input-group-text">$</span>
 								</div>
-								<input class="form-control" type="number" v-model="t.cost" required/>
+								<input
+									class="form-control"
+									:class="{ 'is-invalid': v.cost.$invalid }"
+									type="number"
+									v-model.number="v.cost.$model"/>
 							</div>
 						</div>
 					</div>
@@ -82,8 +109,13 @@
 					<div class="form-group row">
 						<label class="col-sm-3 col-form-label">Paid For</label>
 						<div class="col-sm-9">
-							<select class="form-control" size="5" multiple v-model="t.debtors" required>
-								<option v-for="u in users" v-bind:key="u.id" v-bind:value="u.id">{{u.name}}</option>
+							<select
+								class="custom-select"
+								:class="{ 'is-invalid': v.debtors.$invalid }"
+								size="5"
+								multiple
+								v-model="v.debtors.$model">
+								<option v-for="u in users" :key="u.id" :value="u.id">{{u.name}}</option>
 							</select>
 						</div>
 					</div>
@@ -98,7 +130,7 @@
 				<hr>
 
 				<div class="text-center">
-					<button type="button" class="btn btn-outline-dark" v-on:click="save(transaction)">Save</button>
+					<button type="button" class="btn btn-outline-dark" :disabled="$v.transaction.$invalid" v-on:click="save(transaction)">Save</button>
 					<router-link to="/" class="btn btn-link">Cancel</router-link>
 				</div>
 			</form>
@@ -109,6 +141,7 @@
 
 <script>
 import axios from 'axios'
+import { required } from 'vuelidate/lib/validators'
 
 export default {
 	name: 'transaction',
@@ -119,8 +152,44 @@ export default {
 		return {
 			users: [],
 			transaction: {
+				date: "",
+				description: "",
+				cost: null,
+				creditor_id: "",
 				debtors: [],
 				sub_items: []
+			}
+		}
+	},
+	validations: {
+		transaction: {
+			date: {
+				required
+			},
+			description: {
+				required
+			},
+			cost: {
+				required
+			},
+			creditor_id: {
+				required
+			},
+			debtors: {
+				required
+			},
+			sub_items: {
+				$each: {
+					description: {
+						required
+					},
+					cost: {
+						required
+					},
+					debtors: {
+						required
+					}
+				}
 			}
 		}
 	},

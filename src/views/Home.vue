@@ -1,17 +1,17 @@
 <template>
 <div class="row">
 	<div class="col-sm-3 col-md-2">
-		<div class="card mb-4" v-for="u in users" v-bind:key="u.id">
+		<div class="card mb-4" v-for="u in users" :key="u.id">
 			<h6 class="card-header">{{u.name}}</h6>
 
 			<div class="card-body" v-if="u.url">
-				<a v-bind:href="u.url">{{u.url}}</a>
+				<a :href="u.url">{{u.url}}</a>
 			</div>
 
 			<table class="table mb-0">
-				<tr v-for="d in u.debts" v-bind:key="d.name">
+				<tr v-for="d in u.debts" :key="d.name">
 					<td>{{d.name}}</td>
-					<td class="text-right" v-bind:class="{ 'text-danger': d.amount > 0, 'text-success': d.amount < 0 }">
+					<td class="text-right" :class="{ 'text-danger': d.amount > 0, 'text-success': d.amount < 0 }">
 						<strong>{{d.amount | number(2)}}</strong>
 					</td>
 				</tr>
@@ -36,7 +36,7 @@
 				<th scope="col"></th>
 				<th scope="col"></th>
 
-				<tbody v-for="t in transactionsView" v-bind:key="t.id">
+				<tbody v-for="t in transactionsView" :key="t.id">
 					<tr>
 						<td>{{t.date | date}}</td>
 						<td>{{t.description}}</td>
