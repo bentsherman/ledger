@@ -25,7 +25,14 @@ app.use(logger("dev"));
 app.use("/", express.static(DOC_ROOT));
 
 app.get("/api/transactions", function(req, res) {
-	let docs = db.query("transactions");
+	let page = Number.parseInt(req.query.page || 0);
+	let pageSize = 100;
+
+	let docs = db.query("transactions")
+		.sort(function(a, b) {
+			return b["date"].localeCompare(a["date"])
+		})
+		.slice(page * pageSize, (page + 1) * pageSize);
 
 	res.status(200).send(docs);
 });

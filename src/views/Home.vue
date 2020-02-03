@@ -27,6 +27,13 @@
 				<router-link to="/transaction/0">Create transaction</router-link>
 			</div>
 
+			<div class="card-body">
+				<div class="button-group">
+					<button class="btn btn-light" :disabled="page == 0" v-on:click="page > 0 && query(page - 1)">newer</button>
+					<button class="btn btn-light" v-on:click="query(page + 1)">older</button>
+				</div>
+			</div>
+
 			<table class="table mb-0">
 				<th scope="col">Date</th>
 				<th scope="col">Description</th>
@@ -78,6 +85,7 @@ export default {
 	name: 'home',
 	data: function() {
 		return {
+			page: 0,
 			transactions: [],
 			users: []
 		}
@@ -86,8 +94,6 @@ export default {
 		const self = this
 
 		self.users = (await axios.get("/api/users")).data
-		self.transactions = (await axios.get("/api/transactions")).data
-
 		self.users.forEach(function(u1) {
 			u1.debts = self.users
 				.map(function(u2) {
@@ -101,8 +107,14 @@ export default {
 					return (u1.name !== u2.name);
 				})
 		})
+
+		await self.query(0)
 	},
 	methods: {
+		query: async function(page) {
+			this.transactions = (await axios.get(`/api/transactions?page=${page}`)).data
+			this.page = page
+		},
 		computeDebt: function(debtor, creditor) {
 			// flatten transactions and sub-items into array
 			let transactions = this.transactions
