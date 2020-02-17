@@ -73,10 +73,56 @@ app.delete("/api/transactions/:id", function(req, res) {
 	res.status(200).end();
 });
 
-app.get("/api/users", function(req, res) {
-	let docs = db.query("users");
+const computeDebt = function(debtor, creditor) {
+	// flatten transactions and sub-items into array
+	let transactions = db.query("transactions")
+		.reduce(function(prev, t) {
+			t.sub_items.forEach(function(sub) {
+				sub.creditor_id = t.creditor_id
+			})
 
-	res.status(200).send(docs);
+			return prev.concat([t], t.sub_items)
+		}, [])
+
+	// compute debts
+	let debt = transactions
+		.filter(function(t) {
+			return (t.creditor_id === creditor.id && t.debtors.indexOf(debtor.id) !== -1)
+		})
+		.reduce(function(sum, t) {
+			return sum + t.cost / t.debtors.length
+		}, 0)
+
+	// compute credits
+	let credit = transactions
+		.filter(function(t) {
+			return (t.creditor_id === debtor.id && t.debtors.indexOf(creditor.id) !== -1)
+		})
+		.reduce(function(sum, t) {
+			return sum + t.cost / t.debtors.length
+		}, 0)
+
+	return debt - credit
+};
+
+app.get("/api/users", function(req, res) {
+	let users = db.query("users");
+
+	users.forEach(function(u1) {
+		u1.debts = users
+			.map(function(u2) {
+				return {
+					id: u2.id,
+					name: u2.name,
+					amount: computeDebt(u1, u2)
+				}
+			})
+			.filter(function(u2) {
+				return (u1.name !== u2.name);
+			})
+	})
+
+	res.status(200).send(users);
 });
 
 // define 404 handler

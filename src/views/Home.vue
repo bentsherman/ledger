@@ -11,7 +11,7 @@
 			<table class="table mb-0">
 				<tr v-for="d in u.debts" :key="d.name">
 					<td>{{d.name}}</td>
-					<td class="text-right" :class="{ 'text-danger': d.amount > 0, 'text-success': d.amount < 0 }">
+					<td class="text-right" :class="{ 'text-danger': d.amount > 0.005, 'text-success': d.amount < -0.005 }">
 						<strong>{{d.amount | number(2)}}</strong>
 					</td>
 				</tr>
@@ -20,7 +20,7 @@
 	</div>
 
 	<div class="col-sm-9 col-md-10">
-		<div class="card">
+		<div class="card mb-4">
 			<h6 class="card-header">Transactions</h6>
 
 			<div class="card-body">
@@ -43,7 +43,7 @@
 				<th scope="col"></th>
 				<th scope="col"></th>
 
-				<tbody v-for="t in transactionsView" :key="t.id">
+				<tbody v-for="t in transactions" :key="t.id">
 					<tr>
 						<td>{{t.date | date}}</td>
 						<td>{{t.description}}</td>
@@ -91,60 +91,14 @@ export default {
 		}
 	},
 	mounted: async function() {
-		const self = this
+		this.users = (await axios.get("/api/users")).data
 
-		self.users = (await axios.get("/api/users")).data
-		self.users.forEach(function(u1) {
-			u1.debts = self.users
-				.map(function(u2) {
-					return {
-						id: u2.id,
-						name: u2.name,
-						amount: self.computeDebt(u1, u2)
-					}
-				})
-				.filter(function(u2) {
-					return (u1.name !== u2.name);
-				})
-		})
-
-		await self.query(0)
+		await this.query(0)
 	},
 	methods: {
 		query: async function(page) {
 			this.transactions = (await axios.get(`/api/transactions?page=${page}`)).data
 			this.page = page
-		},
-		computeDebt: function(debtor, creditor) {
-			// flatten transactions and sub-items into array
-			let transactions = this.transactions
-				.reduce(function(prev, t) {
-					t.sub_items.forEach(function(sub) {
-						sub.creditor_id = t.creditor_id
-					})
-
-					return prev.concat([t], t.sub_items)
-				}, [])
-
-			// compute debts
-			let debt = transactions
-				.filter(function(t) {
-					return (t.creditor_id === creditor.id && t.debtors.indexOf(debtor.id) !== -1)
-				})
-				.reduce(function(sum, t) {
-					return sum + t.cost / t.debtors.length
-				}, 0)
-
-			// compute credits
-			let credit = transactions
-				.filter(function(t) {
-					return (t.creditor_id === debtor.id && t.debtors.indexOf(creditor.id) !== -1)
-				})
-				.reduce(function(sum, t) {
-					return sum + t.cost / t.debtors.length
-				}, 0)
-
-			return debt - credit
 		},
 		deleteTransaction: async function(t) {
 			if ( !confirm(`Are you sure you want to delete "${t.description}"?`) ) {
@@ -154,15 +108,6 @@ export default {
 			await axios.delete(`/api/transactions/${t.id}`)
 
 			this.$router.go()
-		}
-	},
-	computed: {
-		transactionsView: function() {
-			return this.transactions
-				.slice()
-				.sort(function(a, b) {
-					return b["date"].localeCompare(a["date"])
-				})
 		}
 	}
 }
