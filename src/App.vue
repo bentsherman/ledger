@@ -1,11 +1,13 @@
 <template>
-<div class="container-fluid" id="app">
-	<div class="display-1 text-center">
-		<h1>The Ledger</h1>
+<div>
+	<nav class="navbar navbar-expand navbar-dark bg-dark mb-5">
+		<div class="container-fluid">
+			<a class="navbar-brand" href="/">Ledger</a>
+		</div>
+	</nav>
+
+	<div class="container-fluid">
+		<router-view></router-view>
 	</div>
-
-	<hr>
-
-	<router-view></router-view>
 </div>
 </template>
