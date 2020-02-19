@@ -40,7 +40,7 @@
 								v-model.number="$v.transaction.cost.$model"/>
 						</div>
 
-						<p class="form-text text-right">(with sub-items removed: ${{getSubTotal(transaction) | number(2)}})</p>
+						<p class="form-text text-right" v-if="transaction.cost">(with sub-items removed: ${{getSubTotal(transaction) | number(2)}})</p>
 					</div>
 				</div>
 
@@ -183,6 +183,7 @@ export default {
 		}
 		else {
 			this.transaction = {
+				id: "0",
 				debtors: [],
 				sub_items: []
 			}
