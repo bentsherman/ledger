@@ -83,24 +83,24 @@ import axios from 'axios'
 
 export default {
 	name: 'home',
-	data: function() {
+	data() {
 		return {
 			page: 0,
 			transactions: [],
 			users: []
 		}
 	},
-	mounted: async function() {
+	async beforeMount() {
 		this.users = (await axios.get("/api/users")).data
 
 		await this.query(0)
 	},
 	methods: {
-		query: async function(page) {
+		async query(page) {
 			this.transactions = (await axios.get(`/api/transactions?page=${page}`)).data
 			this.page = page
 		},
-		deleteTransaction: async function(t) {
+		async deleteTransaction(t) {
 			if ( !confirm(`Are you sure you want to delete "${t.description}"?`) ) {
 				return
 			}

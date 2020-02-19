@@ -2,9 +2,9 @@
 <div class="row justify-content-center">
 	<div class="col-sm-6">
 		<div class="card mb-4">
-			<h6 class="card-header">Create Transaction</h6>
+			<h6 class="card-header">Transaction</h6>
 
-			<form class="card-body">
+			<form class="card-body" v-if="transaction">
 				<div class="form-group row">
 					<label class="col-sm-3 col-form-label">Date</label>
 					<div class="col-sm-9">
@@ -147,17 +147,10 @@ export default {
 	props: {
 		"id": String
 	},
-	data: function() {
+	data() {
 		return {
 			users: [],
-			transaction: {
-				date: "",
-				description: "",
-				cost: null,
-				creditor_id: "",
-				debtors: [],
-				sub_items: []
-			}
+			transaction: null
 		}
 	},
 	validations: {
@@ -176,28 +169,34 @@ export default {
 			}
 		}
 	},
-	mounted: async function() {
-		const self = this
+	async beforeMount() {
+		this.users = (await axios.get("/api/users")).data
 
-		self.users = (await axios.get("/api/users")).data
+		if ( this.id !== "0" ) {
+			let transaction = (await axios.get(`/api/transactions/${this.id}`)).data
 
-		if ( self.id !== "0" ) {
-			self.transaction = (await axios.get(`/api/transactions/${self.id}`)).data
-
-			self.transaction.sub_items.forEach(function(t) {
-				self.transaction.cost += t.cost
+			transaction.sub_items.forEach(function(t) {
+				transaction.cost += t.cost
 			})
+
+			this.transaction = transaction
+		}
+		else {
+			this.transaction = {
+				debtors: [],
+				sub_items: []
+			}
 		}
 	},
 	methods: {
-		getSubTotal: function(transaction) {
+		getSubTotal(transaction) {
 			let sum = transaction.sub_items.reduce(function(sum, t) {
 				return sum + t.cost
 			}, 0)
 
 			return transaction.cost - sum
 		},
-		save: async function(transaction) {
+		async save(transaction) {
 			// subtract cost of sub-transactions from main transaction
 			transaction.cost = this.getSubTotal(transaction)
 
