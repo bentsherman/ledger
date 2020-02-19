@@ -1,7 +1,7 @@
 <template>
 <div class="row justify-content-center">
 	<div class="col-sm-6">
-		<div class="card">
+		<div class="card mb-4">
 			<h6 class="card-header">Create Transaction</h6>
 
 			<form class="card-body">
@@ -11,9 +11,8 @@
 						<input
 							class="form-control"
 							:class="{ 'is-invalid': $v.transaction.date.$invalid }"
-							type="date"
 							v-model="$v.transaction.date.$model"
-							placeholder="yyyy-mm-dd"/>
+							placeholder="yyyy-MM-dd"/>
 					</div>
 				</div>
 
@@ -71,12 +70,12 @@
 					</div>
 				</div>
 
-				<div v-for="(v, index) in $v.transaction.sub_items.$each.$iter">
+				<div v-for="(v, index) in $v.transaction.sub_items.$each.$iter" :key="index">
 					<hr>
 
 					<div class="form-group row justify-content-end">
 						<div class="col">
-							<span class="close button-icon" v-on:click="transaction.sub_items.splice(index, 1)">&times;</span>
+							<span class="close button-icon" @click="transaction.sub_items.splice(index, 1)">&times;</span>
 						</div>
 					</div>
 
@@ -124,13 +123,13 @@
 				<hr>
 
 				<div class="form-group row text-center">
-					<button type="button" class="btn btn-link" v-on:click="transaction.sub_items.push({debtors: []})">Add separate sub-item...</button>
+					<button type="button" class="btn btn-link" @click="transaction.sub_items.push({debtors: []})">Add separate sub-item...</button>
 				</div>
 
 				<hr>
 
 				<div class="text-center">
-					<button type="button" class="btn btn-outline-dark" :disabled="$v.transaction.$invalid" v-on:click="save(transaction)">Save</button>
+					<button type="button" class="btn btn-outline-dark" :disabled="$v.transaction.$invalid" @click="save(transaction)">Save</button>
 					<router-link to="/" class="btn btn-link">Cancel</router-link>
 				</div>
 			</form>
@@ -163,32 +162,16 @@ export default {
 	},
 	validations: {
 		transaction: {
-			date: {
-				required
-			},
-			description: {
-				required
-			},
-			cost: {
-				required
-			},
-			creditor_id: {
-				required
-			},
-			debtors: {
-				required
-			},
+			date: { required },
+			description: { required },
+			cost: { required },
+			creditor_id: { required },
+			debtors: { required },
 			sub_items: {
 				$each: {
-					description: {
-						required
-					},
-					cost: {
-						required
-					},
-					debtors: {
-						required
-					}
+					description: { required },
+					cost: { required },
+					debtors: { required }
 				}
 			}
 		}

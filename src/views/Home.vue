@@ -29,8 +29,8 @@
 
 			<div class="card-body">
 				<div class="button-group">
-					<button class="btn btn-light" :disabled="page == 0" v-on:click="page > 0 && query(page - 1)">newer</button>
-					<button class="btn btn-light" v-on:click="query(page + 1)">older</button>
+					<button class="btn btn-light" :disabled="page == 0" @click="page > 0 && query(page - 1)">newer</button>
+					<button class="btn btn-light" @click="query(page + 1)">older</button>
 				</div>
 			</div>
 
@@ -56,7 +56,7 @@
 							<router-link :to="'/transaction/' + t.id">Edit</router-link>
 						</td>
 						<td class="text-center">
-							<span class="button-icon" v-on:click="deleteTransaction(t)">&times;</span>
+							<span class="button-icon" @click="deleteTransaction(t)">&times;</span>
 						</td>
 					</tr>
 
