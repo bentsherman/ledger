@@ -10,7 +10,7 @@
 					<div class="col-sm-9">
 						<input
 							class="form-control"
-							:class="{ 'is-invalid': $v.transaction.date.$invalid && false }"
+							:class="{ 'is-invalid': $v.transaction.date.$invalid }"
 							v-model="$v.transaction.date.$model"
 							placeholder="yyyy-MM-dd"/>
 					</div>
@@ -21,7 +21,7 @@
 					<div class="col-sm-9">
 						<input
 							class="form-control"
-							:class="{ 'is-invalid': $v.transaction.description.$invalid && false }"
+							:class="{ 'is-invalid': $v.transaction.description.$invalid }"
 							v-model="$v.transaction.description.$model"/>
 					</div>
 				</div>
@@ -35,7 +35,7 @@
 							</div>
 							<input
 								class="form-control"
-								:class="{ 'is-invalid': $v.transaction.cost.$invalid && false }"
+								:class="{ 'is-invalid': $v.transaction.cost.$invalid }"
 								type="number"
 								v-model.number="$v.transaction.cost.$model"/>
 						</div>
@@ -49,7 +49,7 @@
 					<div class="col-sm-9">
 						<select
 							class="custom-select"
-							:class="{ 'is-invalid': $v.transaction.creditor_id.$invalid && false }"
+							:class="{ 'is-invalid': $v.transaction.creditor_id.$invalid }"
 							v-model="$v.transaction.creditor_id.$model">
 							<option v-for="u in users" :key="u.id" :value="u.id">{{u.name}}</option>
 						</select>
@@ -61,7 +61,7 @@
 					<div class="col-sm-9">
 						<select
 							class="custom-select"
-							:class="{ 'is-invalid': $v.transaction.debtors.$invalid && false }"
+							:class="{ 'is-invalid': $v.transaction.debtors.$invalid }"
 							size="5"
 							multiple
 							v-model="$v.transaction.debtors.$model">
@@ -84,7 +84,7 @@
 						<div class="col-sm-9">
 							<input
 								class="form-control"
-								:class="{ 'is-invalid': v.description.$invalid && false }"
+								:class="{ 'is-invalid': v.description.$invalid }"
 								v-model="v.description.$model"/>
 						</div>
 					</div>
@@ -98,7 +98,7 @@
 								</div>
 								<input
 									class="form-control"
-									:class="{ 'is-invalid': v.cost.$invalid && false }"
+									:class="{ 'is-invalid': v.cost.$invalid }"
 									type="number"
 									v-model.number="v.cost.$model"/>
 							</div>
@@ -110,7 +110,7 @@
 						<div class="col-sm-9">
 							<select
 								class="custom-select"
-								:class="{ 'is-invalid': v.debtors.$invalid && false }"
+								:class="{ 'is-invalid': v.debtors.$invalid }"
 								size="5"
 								multiple
 								v-model="v.debtors.$model">
@@ -129,7 +129,7 @@
 				<hr>
 
 				<div class="text-center">
-					<button type="button" class="btn btn-outline-dark" :disabled="$v.$invalid && false" @click="save(transaction)">Save</button>
+					<button type="button" class="btn btn-outline-dark" :disabled="false && $v.$invalid" @click="save(transaction)">Save</button>
 					<router-link to="/" class="btn btn-link">Cancel</router-link>
 				</div>
 			</form>
