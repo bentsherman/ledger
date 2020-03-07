@@ -145,7 +145,7 @@ import { required } from 'vuelidate/lib/validators'
 export default {
 	name: 'transaction',
 	props: {
-		"id": String
+		id: String
 	},
 	data() {
 		return {
@@ -170,9 +170,9 @@ export default {
 		}
 	},
 	async beforeMount() {
-		this.users = (await axios.get("/api/users")).data
+		this.users = (await axios.get('/api/users')).data
 
-		if ( this.id !== "0" ) {
+		if ( this.id !== '0' ) {
 			let transaction = (await axios.get(`/api/transactions/${this.id}`)).data
 
 			transaction.sub_items.forEach(function(t) {
@@ -183,7 +183,7 @@ export default {
 		}
 		else {
 			this.transaction = {
-				id: "0",
+				id: '0',
 				debtors: [],
 				sub_items: []
 			}
@@ -203,7 +203,7 @@ export default {
 
 			await axios.post(`/api/transactions/${transaction.id}`, transaction)
 
-			this.$router.push("/")
+			this.$router.push('/')
 		}
 	}
 }

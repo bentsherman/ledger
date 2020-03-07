@@ -91,7 +91,7 @@ export default {
 		}
 	},
 	async beforeMount() {
-		this.users = (await axios.get("/api/users")).data
+		this.users = (await axios.get('/api/users')).data
 
 		await this.query(0)
 	},
