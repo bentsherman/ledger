@@ -123,13 +123,13 @@
 				<hr>
 
 				<div class="form-group row text-center">
-					<button type="button" class="btn btn-link" @click="transaction.sub_items.push({debtors: []})">Add separate sub-item...</button>
+					<button type="button" class="btn btn-link" @click="addSubItem(transaction)">Add separate sub-item...</button>
 				</div>
 
 				<hr>
 
 				<div class="text-center">
-					<button type="button" class="btn btn-outline-dark" :disabled="false && $v.$invalid" @click="save(transaction)">Save</button>
+					<button type="button" class="btn btn-outline-dark" :disabled="$v.$invalid" @click="save(transaction)">Save</button>
 					<router-link to="/" class="btn btn-link">Cancel</router-link>
 				</div>
 			</form>
@@ -175,7 +175,7 @@ export default {
 		if ( this.id !== '0' ) {
 			let transaction = (await axios.get(`/api/transactions/${this.id}`)).data
 
-			transaction.sub_items.forEach(function(t) {
+			transaction.sub_items.forEach((t) => {
 				transaction.cost += t.cost
 			})
 
@@ -184,6 +184,10 @@ export default {
 		else {
 			this.transaction = {
 				id: '0',
+				date: null,
+				description: null,
+				cost: null,
+				creditor_id: null,
 				debtors: [],
 				sub_items: []
 			}
@@ -191,12 +195,21 @@ export default {
 	},
 	methods: {
 		getSubTotal(transaction) {
-			let sum = transaction.sub_items.reduce(function(sum, t) {
+			let sum = transaction.sub_items.reduce((sum, t) => {
 				return sum + t.cost
 			}, 0)
 
 			return transaction.cost - sum
 		},
+
+		addSubItem(transaction) {
+			transaction.sub_items.push({
+				description: null,
+				cost: null,
+				debtors: []
+			})
+		},
+
 		async save(transaction) {
 			// subtract cost of sub-transactions from main transaction
 			transaction.cost = this.getSubTotal(transaction)
