@@ -54,23 +54,23 @@
 						<td class="text-right">{{t.cost | number(2)}}</td>
 						<td>{{users[t.creditor_id].short_name}}</td>
 						<td>
-							<div v-for="id in t.debtors">{{users[id].short_name}}</div>
+							<div v-for="(id, index) in t.debtors" :key="index">{{users[id].short_name}}</div>
 						</td>
 						<td class="text-center">
 							<router-link :to="'/transaction/' + t.id">Edit</router-link>
 						</td>
 						<td class="text-center">
-							<span class="button-icon" @click="deleteTransaction(t)">&times;</span>
+							<span class="button-icon" @click="remove(t)">&times;</span>
 						</td>
 					</tr>
 
-					<tr v-for="sub in t.sub_items">
+					<tr v-for="(sub, index) in t.sub_items" :key="index">
 						<td></td>
 						<td>{{sub.description}}</td>
 						<td class="text-right">{{sub.cost | number(2)}}</td>
 						<td></td>
 						<td>
-							<div v-for="id in sub.debtors">{{users[id].short_name}}</div>
+							<div v-for="(id, index) in sub.debtors" :key="index">{{users[id].short_name}}</div>
 						</td>
 						<td></td>
 						<td></td>
@@ -109,7 +109,7 @@ export default {
 
 			this.loading = false
 		},
-		async deleteTransaction(t) {
+		async remove(t) {
 			if ( !confirm(`Are you sure you want to delete "${t.description}"?`) ) {
 				return
 			}

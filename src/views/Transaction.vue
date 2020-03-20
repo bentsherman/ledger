@@ -10,7 +10,7 @@
 					<div class="col-sm-9">
 						<input
 							class="form-control"
-							:class="{ 'is-invalid': $v.transaction.date.$invalid }"
+							:class="{ 'is-invalid': $v.transaction.date.$error }"
 							v-model="$v.transaction.date.$model"
 							placeholder="yyyy-MM-dd"/>
 					</div>
@@ -21,7 +21,7 @@
 					<div class="col-sm-9">
 						<input
 							class="form-control"
-							:class="{ 'is-invalid': $v.transaction.description.$invalid }"
+							:class="{ 'is-invalid': $v.transaction.description.$error }"
 							v-model="$v.transaction.description.$model"/>
 					</div>
 				</div>
@@ -35,7 +35,7 @@
 							</div>
 							<input
 								class="form-control"
-								:class="{ 'is-invalid': $v.transaction.cost.$invalid }"
+								:class="{ 'is-invalid': $v.transaction.cost.$error }"
 								type="number"
 								v-model.number="$v.transaction.cost.$model"/>
 						</div>
@@ -49,7 +49,7 @@
 					<div class="col-sm-9">
 						<select
 							class="custom-select"
-							:class="{ 'is-invalid': $v.transaction.creditor_id.$invalid }"
+							:class="{ 'is-invalid': $v.transaction.creditor_id.$error }"
 							v-model="$v.transaction.creditor_id.$model">
 							<option v-for="u in users" :key="u.id" :value="u.id">{{u.name}}</option>
 						</select>
@@ -61,7 +61,7 @@
 					<div class="col-sm-9">
 						<select
 							class="custom-select"
-							:class="{ 'is-invalid': $v.transaction.debtors.$invalid }"
+							:class="{ 'is-invalid': $v.transaction.debtors.$error }"
 							size="5"
 							multiple
 							v-model="$v.transaction.debtors.$model">
@@ -84,7 +84,7 @@
 						<div class="col-sm-9">
 							<input
 								class="form-control"
-								:class="{ 'is-invalid': v.description.$invalid }"
+								:class="{ 'is-invalid': v.description.$error }"
 								v-model="v.description.$model"/>
 						</div>
 					</div>
@@ -98,7 +98,7 @@
 								</div>
 								<input
 									class="form-control"
-									:class="{ 'is-invalid': v.cost.$invalid }"
+									:class="{ 'is-invalid': v.cost.$error }"
 									type="number"
 									v-model.number="v.cost.$model"/>
 							</div>
@@ -110,7 +110,7 @@
 						<div class="col-sm-9">
 							<select
 								class="custom-select"
-								:class="{ 'is-invalid': v.debtors.$invalid }"
+								:class="{ 'is-invalid': v.debtors.$error }"
 								size="5"
 								multiple
 								v-model="v.debtors.$model">
