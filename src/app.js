@@ -9,7 +9,7 @@ Vue.config.productionTip = false
 
 Vue.use(Vuelidate)
 
-Vue.filter('date', function(value, format) {
+Vue.filter('date', (value, format) => {
 	let date = new Date(value)
 	let yyyy = date.getUTCFullYear()
 	let MM = date.getUTCMonth() + 1
@@ -18,15 +18,15 @@ Vue.filter('date', function(value, format) {
 	return `${MM}/${dd}/${yyyy}`
 })
 
-Vue.filter('json', function(value) {
+Vue.filter('json', (value) => {
 	return JSON.stringify(value, null, 2);
 });
 
-Vue.filter('number', function(value, fractionSize) {
+Vue.filter('number', (value, fractionSize) => {
 	return Number.parseFloat(value).toFixed(fractionSize)
 })
 
 new Vue({
 	router,
-	render: function (h) { return h(App) }
+	render(h) { return h(App) }
 }).$mount('#app')

@@ -96,26 +96,47 @@ export default {
 		}
 	},
 	async beforeMount() {
+		// query users
 		this.users = (await axios.get('/api/users')).data
 
+		// query first page of transactions
 		await this.query(0)
 	},
 	methods: {
+		/**
+		 * Query a page of transactions.
+		 *
+		 * @param {number} page
+		 */
 		async query(page) {
+			// enter loading state
 			this.loading = true
 
+			// query transactions
 			this.transactions = (await axios.get(`/api/transactions?page=${page}`)).data
+
+			// update page
 			this.page = page
 
+			// exit loading state
 			this.loading = false
 		},
-		async remove(t) {
-			if ( !confirm(`Are you sure you want to delete "${t.description}"?`) ) {
+
+		/**
+		 * Delete a transaction.
+		 *
+		 * @param {object} transaction
+		 */
+		async remove(transaction) {
+			// prompt the user to confirm action
+			if ( !confirm(`Are you sure you want to delete "${transaction.description}"?`) ) {
 				return
 			}
 
-			await axios.delete(`/api/transactions/${t.id}`)
+			// delete transaction
+			await axios.delete(`/api/transactions/${transaction.id}`)
 
+			// refresh the view
 			this.$router.go()
 		}
 	}

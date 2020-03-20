@@ -170,17 +170,24 @@ export default {
 		}
 	},
 	async beforeMount() {
+		// query users
 		this.users = (await axios.get('/api/users')).data
 
+		// get transaction from database
 		if ( this.id !== '0' ) {
+			// get transaction
 			let transaction = (await axios.get(`/api/transactions/${this.id}`)).data
 
+			// add sub-item costs to total cost
 			transaction.sub_items.forEach((t) => {
 				transaction.cost += t.cost
 			})
 
+			// add transaction to scope
 			this.transaction = transaction
 		}
+
+		// initialize transaction if it is new
 		else {
 			this.transaction = {
 				id: '0',
@@ -194,14 +201,25 @@ export default {
 		}
 	},
 	methods: {
+		/**
+		 * Compute the total cost of a transaction with sub-item
+		 * costs removed.
+		 *
+		 * @param {object} transaction
+		 */
 		getSubTotal(transaction) {
-			let sum = transaction.sub_items.reduce((sum, t) => {
-				return sum + t.cost
-			}, 0)
+			// compute the cost of all sub-items
+			let sum = transaction.sub_items.reduce((sum, t) => (sum + t.cost), 0)
 
+			// remove the sub-item cost from the total cost
 			return transaction.cost - sum
 		},
 
+		/**
+		 * Add a new sub-item to a transaction.
+		 *
+		 * @param {object} transaction
+		 */
 		addSubItem(transaction) {
 			transaction.sub_items.push({
 				description: null,
@@ -210,12 +228,19 @@ export default {
 			})
 		},
 
+		/**
+		 * Save a transaction.
+		 *
+		 * @param {object} transaction
+		 */
 		async save(transaction) {
-			// subtract cost of sub-transactions from main transaction
+			// subtract sub-item costs from total cost
 			transaction.cost = this.getSubTotal(transaction)
 
+			// save transaction
 			await axios.post(`/api/transactions/${transaction.id}`, transaction)
 
+			// redirect to the home page
 			this.$router.push('/')
 		}
 	}
