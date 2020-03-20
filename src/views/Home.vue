@@ -34,7 +34,11 @@
 				</div>
 			</div>
 
-			<table class="table mb-0">
+			<div class="card-body text-center" v-if="loading">
+				<div class="spinner-border"></div>
+			</div>
+
+			<table class="table mb-0" v-else>
 				<th scope="col">Date</th>
 				<th scope="col">Description</th>
 				<th scope="col">Cost ($)</th>
@@ -87,7 +91,8 @@ export default {
 		return {
 			page: 0,
 			transactions: [],
-			users: []
+			users: [],
+			loading: false
 		}
 	},
 	async beforeMount() {
@@ -97,8 +102,12 @@ export default {
 	},
 	methods: {
 		async query(page) {
+			this.loading = true
+
 			this.transactions = (await axios.get(`/api/transactions?page=${page}`)).data
 			this.page = page
+
+			this.loading = false
 		},
 		async deleteTransaction(t) {
 			if ( !confirm(`Are you sure you want to delete "${t.description}"?`) ) {
