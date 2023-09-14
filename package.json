@@ -14,7 +14,6 @@
   "scripts": {
     "dev": "bun run --watch src/index.jsx",
     "start": "pm2 startOrReload app.json",
-    "stop": "pm2 delete ledger",
-    "pm2": "pm2"
+    "stop": "pm2 delete ledger"
   }
 }

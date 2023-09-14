@@ -1,6 +1,7 @@
 {
   "apps": [{
     "name": "ledger",
-    "script": "src/index.js"
+    "script": "src/index.jsx",
+    "interpreter": "bun"
   }]
 }
