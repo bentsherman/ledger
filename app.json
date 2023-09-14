@@ -1,6 +1,6 @@
 {
   "apps": [{
     "name": "ledger",
-    "script": "server/app.js"
+    "script": "src/index.js"
   }]
 }
