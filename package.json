@@ -7,6 +7,7 @@
     "@elysiajs/html": "^0.6.0",
     "@elysiajs/static": "^0.6.0",
     "elysia": "^0.6.17",
+    "pm2": "^5.3.0",
     "typed-html": "^3.0.1"
   },
   "license": "MIT",
